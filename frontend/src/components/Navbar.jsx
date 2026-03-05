@@ -52,23 +52,30 @@ const Navbar = ({ userInfo, onSearchNote, handleClearSearch }) => {
   }
 
   return (
-    <div className="bg-white flex items-center justify-between px-6 py-2 drop-shadow">
-      <Link to={"/"}>
-        <h2 className="text-xl font-medium text-black py-2">
-          <span className="text-slate-500">Good</span>
-          <span className="text-slate-900">Notes</span>
-        </h2>
-      </Link>
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-soft">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
+        <Link to={"/"} className="flex items-center gap-2 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-md group-hover:shadow-glow transition-shadow duration-300">
+            <span className="text-white font-bold text-sm">JN</span>
+          </div>
+          <h2 className="text-xl font-bold tracking-tight">
+            <span className="text-gray-400">Just</span>
+            <span className="bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-transparent">
+              Notes
+            </span>
+          </h2>
+        </Link>
 
-      <SearchBar
-        value={searchQuery}
-        onChange={({ target }) => setSearchQuery(target.value)}
-        handleSearch={handleSearch}
-        onClearSearch={onClearSearch}
-      />
+        <SearchBar
+          value={searchQuery}
+          onChange={({ target }) => setSearchQuery(target.value)}
+          handleSearch={handleSearch}
+          onClearSearch={onClearSearch}
+        />
 
-      <ProfileInfo userInfo={userInfo} onLogout={onLogout} />
-    </div>
+        <ProfileInfo userInfo={userInfo} onLogout={onLogout} />
+      </div>
+    </nav>
   )
 }
 

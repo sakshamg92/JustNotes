@@ -20,8 +20,6 @@ const Home = () => {
 
   const [isSearch, setIsSearch] = useState(false)
 
-  // console.log(allNotes)
-
   const navigate = useNavigate()
 
   const [openAddEditModal, setOpenAddEditModal] = useState({
@@ -50,8 +48,6 @@ const Home = () => {
         console.log(res.data)
         return
       }
-
-      // console.log(res.data)
 
       setAllNotes(res.data.notes)
     } catch (error) {
@@ -134,17 +130,40 @@ const Home = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen">
       <Navbar
         userInfo={userInfo}
         onSearchNote={onSearchNote}
         handleClearSearch={handleClearSearch}
       />
 
-      <div className="container mx-auto">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Section Header */}
+        {allNotes.length > 0 && (
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-bold text-gray-800">
+                {isSearch ? "Search Results" : "Your Notes"}
+              </h2>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {allNotes.length} note{allNotes.length !== 1 && "s"}{" "}
+                {isSearch && "found"}
+              </p>
+            </div>
+            {isSearch && (
+              <button
+                onClick={handleClearSearch}
+                className="text-xs font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                Clear search
+              </button>
+            )}
+          </div>
+        )}
+
         {allNotes.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-8 max-md:m-5">
-            {allNotes.map((note, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {allNotes.map((note) => (
               <NoteCard
                 key={note._id}
                 title={note.title}
@@ -152,53 +171,48 @@ const Home = () => {
                 content={note.content}
                 tags={note.tags}
                 isPinned={note.isPinned}
-                onEdit={() => {
-                  handleEdit(note)
-                }}
-                onDelete={() => {
-                  deleteNote(note)
-                }}
-                onPinNote={() => {
-                  updateIsPinned(note)
-                }}
+                onEdit={() => handleEdit(note)}
+                onDelete={() => deleteNote(note)}
+                onPinNote={() => updateIsPinned(note)}
               />
             ))}
           </div>
         ) : (
           <EmptyCard
-            imgSrc={
-              isSearch
-                ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtakcQoMFXwFwnlochk9fQSBkNYkO5rSyY9A&s"
-                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDCtZLuixBFGTqGKdWGLaSKiO3qyhW782aZA&s"
-            }
             message={
               isSearch
-                ? "Oops! No Notes found matching your search"
-                : `Ready to capture your ideas? Click the 'Add' button to start noting down your thoughts, inspiration and reminders. Let's get started!`
+                ? "Oops! No notes found matching your search. Try a different keyword."
+                : "Ready to capture your ideas? Click the '+' button to start noting down your thoughts, inspiration, and reminders. Let's get started!"
             }
           />
         )}
       </div>
 
+      {/* Floating Action Button */}
       <button
-        className="w-16 h-16 flex items-center justify-center rounded-2xl bg-[#2B85FF] hover:bg-blue-600 absolute right-10 bottom-10"
-        onClick={() => {
+        className="fixed right-8 bottom-8 w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 shadow-lg hover:shadow-glow active:scale-95 transition-all duration-200 z-40"
+        onClick={() =>
           setOpenAddEditModal({ isShown: true, type: "add", data: null })
-        }}
+        }
       >
-        <MdAdd className="text-[32px] text-white" />
+        <MdAdd className="text-[28px] text-white" />
       </button>
 
+      {/* Modal */}
       <Modal
         isOpen={openAddEditModal.isShown}
-        onRequestClose={() => {}}
+        onRequestClose={() =>
+          setOpenAddEditModal({ isShown: false, type: "add", data: null })
+        }
         style={{
           overlay: {
-            backgroundColor: "rgba(0,0,0,0.2)",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            backdropFilter: "blur(4px)",
+            zIndex: 50,
           },
         }}
         contentLabel=""
-        className="w-[40%] max-md:w-[60%] max-sm:w-[70%] max-h-3/4 bg-white rounded-md mx-auto mt-14 p-5 overflow-scroll"
+        className="w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] max-h-[85vh] bg-white rounded-3xl mx-auto mt-16 p-6 sm:p-8 overflow-auto shadow-2xl outline-none"
       >
         <AddEditNotes
           onClose={() =>
@@ -209,7 +223,7 @@ const Home = () => {
           getAllNotes={getAllNotes}
         />
       </Modal>
-    </>
+    </div>
   )
 }
 

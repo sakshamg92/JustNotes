@@ -4,29 +4,60 @@
 
 @layer base {
   html {
-    font-family: sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    background-color: rgb(241, 245, 241);
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    min-height: 100vh;
     overflow-x: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a5b4fc;
   }
 }
 
 @layer components {
   .input-box {
-    @apply w-full text-sm bg-transparent border-[1.5px] px-5 py-3 rounded mb-4 outline-none;
+    @apply w-full text-sm bg-white/70 border border-gray-200 px-4 py-3 rounded-xl mb-3 outline-none
+           transition-all duration-200
+           focus:border-brand-400 focus:ring-2 focus:ring-brand-100 focus:bg-white
+           placeholder:text-gray-400;
   }
 
   .btn-primary {
-    @apply w-full text-sm bg-[#2B85FF] text-white p-2 rounded my-1 hover:bg-blue-700;
+    @apply w-full text-sm font-semibold text-white p-3 rounded-xl my-1
+           bg-gradient-to-r from-brand-500 to-brand-600
+           hover:from-brand-600 hover:to-brand-700
+           active:scale-[0.98]
+           transition-all duration-200 shadow-md hover:shadow-lg;
   }
 
   .icon-btn {
-    @apply text-xl text-slate-300 cursor-pointer hover:text-[#2B85FF];
+    @apply text-lg text-gray-400 cursor-pointer
+           hover:text-brand-500 transition-colors duration-200;
   }
 
   .input-label {
-    @apply text-xs text-slate-400;
+    @apply text-[11px] font-semibold tracking-wider text-gray-400 uppercase;
+  }
+
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/60 shadow-card;
   }
 }

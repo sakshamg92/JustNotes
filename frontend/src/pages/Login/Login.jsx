@@ -34,8 +34,6 @@ const Login = () => {
 
     setError("")
 
-    // Login API
-
     try {
       dispatch(signInStart())
 
@@ -48,7 +46,8 @@ const Login = () => {
       if (res.data.success === false) {
         toast.error(res.data.message)
         console.log(res.data)
-        dispatch(signInFailure(data.message))
+        dispatch(signInFailure(res.data.message))
+        return
       }
 
       toast.success(res.data.message)
@@ -61,40 +60,72 @@ const Login = () => {
   }
 
   return (
-    <div className="flex items-center justify-center mt-28">
-      <div className="w-96 border rounded bg-white px-7 py-10">
-        <form onSubmit={handleLogin}>
-          <h4 className="text-2xl mb-7">Login</h4>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-brand-50 via-white to-purple-50">
+      {/* Decorative blobs */}
+      <div className="fixed top-0 left-0 w-96 h-96 bg-brand-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2" />
+      <div className="fixed bottom-0 right-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 translate-x-1/2 translate-y-1/2" />
 
-          <input
-            type="text"
-            placeholder="Email"
-            className="input-box"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+      <div className="w-full max-w-md relative">
+        {/* Card */}
+        <div className="glass-card rounded-3xl px-8 py-10 sm:px-10 sm:py-12">
+          {/* Logo */}
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-sm">JN</span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              <span className="text-gray-400">Just</span>
+              <span className="bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-transparent">
+                Notes
+              </span>
+            </h1>
+          </div>
 
-          <PasswordInput
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          {error && <p className="text-red-500 text-sm pb-1">{error}</p>}
-
-          <button type="submit" className="btn-primary">
-            LOGIN
-          </button>
-
-          <p className="text-sm text-center mt-4">
-            Not registered yet?{" "}
-            <Link
-              to={"/signup"}
-              className="font-medium text-[#2B85FF] underline"
-            >
-              Create an account
-            </Link>
+          <h4 className="text-xl font-bold text-gray-800 text-center mb-1">
+            Welcome back
+          </h4>
+          <p className="text-sm text-gray-400 text-center mb-8">
+            Sign in to continue to your notes
           </p>
-        </form>
+
+          <form onSubmit={handleLogin}>
+            <label className="input-label mb-1.5 block">Email</label>
+            <input
+              type="text"
+              placeholder="you@example.com"
+              className="input-box"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <label className="input-label mb-1.5 block">Password</label>
+            <PasswordInput
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            {error && (
+              <div className="flex items-center gap-2 text-red-500 text-xs bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-3">
+                <span>⚠</span>
+                <span>{error}</span>
+              </div>
+            )}
+
+            <button type="submit" className="btn-primary mt-2">
+              Sign In
+            </button>
+
+            <p className="text-sm text-gray-500 text-center mt-6">
+              Don't have an account?{" "}
+              <Link
+                to={"/signup"}
+                className="font-semibold text-brand-600 hover:text-brand-700 transition-colors"
+              >
+                Create one
+              </Link>
+            </p>
+          </form>
+        </div>
       </div>
     </div>
   )
