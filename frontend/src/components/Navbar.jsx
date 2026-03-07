@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 import { toast } from "react-toastify"
 import {
-  signInSuccess,
+  signoutSuccess,
   signoutFailure,
   signoutStart,
 } from "../redux/user/userSlice"
@@ -43,11 +43,13 @@ const Navbar = ({ userInfo, onSearchNote, handleClearSearch }) => {
       }
 
       toast.success(res.data.message)
-      dispatch(signInSuccess())
+      dispatch(signoutSuccess())
       navigate("/login")
     } catch (error) {
-      toast.error(error.message)
-      dispatch(signoutFailure(error.message))
+      // Even if the API call fails (401), still clear local state and redirect
+      dispatch(signoutSuccess())
+      navigate("/login")
+      toast.info("Logged out successfully")
     }
   }
 

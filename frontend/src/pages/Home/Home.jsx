@@ -3,12 +3,13 @@ import NoteCard from "../../components/Cards/NoteCard"
 import { MdAdd } from "react-icons/md"
 import Modal from "react-modal"
 import AddEditNotes from "./AddEditNotes"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import Navbar from "../../components/Navbar"
 import axios from "axios"
 import { toast } from "react-toastify"
 import EmptyCard from "../../components/EmptyCard/EmptyCard"
+import { signoutSuccess } from "../../redux/user/userSlice"
 
 const Home = () => {
   const { currentUser, loading, errorDispatch } = useSelector(
@@ -21,12 +22,20 @@ const Home = () => {
   const [isSearch, setIsSearch] = useState(false)
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const [openAddEditModal, setOpenAddEditModal] = useState({
     isShown: false,
     type: "add",
     data: null,
   })
+
+  // Helper: if any API call returns 401, force logout
+  const handleUnauthorized = () => {
+    dispatch(signoutSuccess())
+    navigate("/login")
+    toast.error("Session expired. Please login again.")
+  }
 
   useEffect(() => {
     if (currentUser === null || !currentUser) {
@@ -52,6 +61,9 @@ const Home = () => {
       setAllNotes(res.data.notes)
     } catch (error) {
       console.log(error)
+      if (error.response?.status === 401) {
+        handleUnauthorized()
+      }
     }
   }
 
@@ -77,7 +89,11 @@ const Home = () => {
       toast.success(res.data.message)
       getAllNotes()
     } catch (error) {
-      toast(error.message)
+      if (error.response?.status === 401) {
+        handleUnauthorized()
+      } else {
+        toast(error.message)
+      }
     }
   }
 
@@ -97,7 +113,11 @@ const Home = () => {
       setIsSearch(true)
       setAllNotes(res.data.notes)
     } catch (error) {
-      toast.error(error.message)
+      if (error.response?.status === 401) {
+        handleUnauthorized()
+      } else {
+        toast.error(error.message)
+      }
     }
   }
 
@@ -125,7 +145,11 @@ const Home = () => {
       toast.success(res.data.message)
       getAllNotes()
     } catch (error) {
-      console.log(error.message)
+      if (error.response?.status === 401) {
+        handleUnauthorized()
+      } else {
+        console.log(error.message)
+      }
     }
   }
 
