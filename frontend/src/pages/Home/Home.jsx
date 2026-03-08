@@ -1,157 +1,157 @@
-import React, { useEffect, useState } from "react"
-import NoteCard from "../../components/Cards/NoteCard"
-import { MdAdd } from "react-icons/md"
-import Modal from "react-modal"
-import AddEditNotes from "./AddEditNotes"
-import { useSelector, useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import Navbar from "../../components/Navbar"
-import axios from "axios"
-import { toast } from "react-toastify"
-import EmptyCard from "../../components/EmptyCard/EmptyCard"
-import { signoutSuccess } from "../../redux/user/userSlice"
+const API_URL = import.meta.env.VITE_API_URL;
+import React, { useEffect, useState } from "react";
+import NoteCard from "../../components/Cards/NoteCard";
+import { MdAdd } from "react-icons/md";
+import Modal from "react-modal";
+import AddEditNotes from "./AddEditNotes";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import axios from "axios";
+import { toast } from "react-toastify";
+import EmptyCard from "../../components/EmptyCard/EmptyCard";
+import { signoutSuccess } from "../../redux/user/userSlice";
 
 const Home = () => {
   const { currentUser, loading, errorDispatch } = useSelector(
-    (state) => state.user
-  )
+    (state) => state.user,
+  );
 
-  const [userInfo, setUserInfo] = useState(null)
-  const [allNotes, setAllNotes] = useState([])
+  const [userInfo, setUserInfo] = useState(null);
+  const [allNotes, setAllNotes] = useState([]);
 
-  const [isSearch, setIsSearch] = useState(false)
+  const [isSearch, setIsSearch] = useState(false);
 
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [openAddEditModal, setOpenAddEditModal] = useState({
     isShown: false,
     type: "add",
     data: null,
-  })
+  });
 
   // Helper: if any API call returns 401, force logout
   const handleUnauthorized = () => {
-    dispatch(signoutSuccess())
-    navigate("/login")
-    toast.error("Session expired. Please login again.")
-  }
+    dispatch(signoutSuccess());
+    navigate("/login");
+    toast.error("Session expired. Please login again.");
+  };
 
   useEffect(() => {
     if (currentUser === null || !currentUser) {
-      navigate("/login")
+      navigate("/login");
     } else {
-      setUserInfo(currentUser?.rest)
-      getAllNotes()
+      setUserInfo(currentUser?.rest);
+      getAllNotes();
     }
-  }, [])
+  }, []);
 
   // get all notes
   const getAllNotes = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/note/all", {
+      const res = await axios.get(`${API_URL}/api/note/all`, {
         withCredentials: true,
-      })
+      });
 
       if (res.data.success === false) {
-        console.log(res.data)
-        return
+        console.log(res.data);
+        return;
       }
 
-      setAllNotes(res.data.notes)
+      setAllNotes(res.data.notes);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       if (error.response?.status === 401) {
-        handleUnauthorized()
+        handleUnauthorized();
       }
     }
-  }
+  };
 
   const handleEdit = (noteDetails) => {
-    setOpenAddEditModal({ isShown: true, data: noteDetails, type: "edit" })
-  }
+    setOpenAddEditModal({ isShown: true, data: noteDetails, type: "edit" });
+  };
 
   // Delete Note
   const deleteNote = async (data) => {
-    const noteId = data._id
+    const noteId = data._id;
 
     try {
-      const res = await axios.delete(
-        "http://localhost:3000/api/note/delete/" + noteId,
-        { withCredentials: true }
-      )
+      const res = await axios.delete(`${API_URL}/api/note/delete/${noteId}`, {
+        withCredentials: true,
+      });
 
       if (res.data.success === false) {
-        toast.error(res.data.message)
-        return
+        toast.error(res.data.message);
+        return;
       }
 
-      toast.success(res.data.message)
-      getAllNotes()
+      toast.success(res.data.message);
+      getAllNotes();
     } catch (error) {
       if (error.response?.status === 401) {
-        handleUnauthorized()
+        handleUnauthorized();
       } else {
-        toast(error.message)
+        toast(error.message);
       }
     }
-  }
+  };
 
   const onSearchNote = async (query) => {
     try {
-      const res = await axios.get("http://localhost:3000/api/note/search", {
+      const res = await axios.get(`${API_URL}/api/note/search`, {
         params: { query },
         withCredentials: true,
-      })
+      });
 
       if (res.data.success === false) {
-        console.log(res.data.message)
-        toast.error(res.data.message)
-        return
+        console.log(res.data.message);
+        toast.error(res.data.message);
+        return;
       }
 
-      setIsSearch(true)
-      setAllNotes(res.data.notes)
+      setIsSearch(true);
+      setAllNotes(res.data.notes);
     } catch (error) {
       if (error.response?.status === 401) {
-        handleUnauthorized()
+        handleUnauthorized();
       } else {
-        toast.error(error.message)
+        toast.error(error.message);
       }
     }
-  }
+  };
 
   const handleClearSearch = () => {
-    setIsSearch(false)
-    getAllNotes()
-  }
+    setIsSearch(false);
+    getAllNotes();
+  };
 
   const updateIsPinned = async (noteData) => {
-    const noteId = noteData._id
+    const noteId = noteData._id;
 
     try {
       const res = await axios.put(
-        "http://localhost:3000/api/note/update-note-pinned/" + noteId,
+        `${API_URL}/api/note/update-note-pinned/${noteId}`,
         { isPinned: !noteData.isPinned },
-        { withCredentials: true }
-      )
+        { withCredentials: true },
+      );
 
       if (res.data.success === false) {
-        toast.error(res.data.message)
-        console.log(res.data.message)
-        return
+        toast.error(res.data.message);
+        console.log(res.data.message);
+        return;
       }
 
-      toast.success(res.data.message)
-      getAllNotes()
+      toast.success(res.data.message);
+      getAllNotes();
     } catch (error) {
       if (error.response?.status === 401) {
-        handleUnauthorized()
+        handleUnauthorized();
       } else {
-        console.log(error.message)
+        console.log(error.message);
       }
     }
-  }
+  };
 
   return (
     <div className="min-h-screen">
@@ -248,7 +248,7 @@ const Home = () => {
         />
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

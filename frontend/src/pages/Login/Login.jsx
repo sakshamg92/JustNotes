@@ -1,63 +1,64 @@
-import React, { useState } from "react"
-import PasswordInput from "../../components/Input/PasswordInput"
-import { Link, useNavigate } from "react-router-dom"
-import { validateEmail } from "../../utils/helper"
-import { useDispatch } from "react-redux"
+const API_URL = import.meta.env.VITE_API_URL;
+import React, { useState } from "react";
+import PasswordInput from "../../components/Input/PasswordInput";
+import { Link, useNavigate } from "react-router-dom";
+import { validateEmail } from "../../utils/helper";
+import { useDispatch } from "react-redux";
 import {
   signInFailure,
   signInStart,
   signInSuccess,
-} from "../../redux/user/userSlice"
-import axios from "axios"
-import { toast } from "react-toastify"
+} from "../../redux/user/userSlice";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address")
-      return
+      setError("Please enter a valid email address");
+      return;
     }
 
     if (!password) {
-      setError("Please enter the password")
-      return
+      setError("Please enter the password");
+      return;
     }
 
-    setError("")
+    setError("");
 
     try {
-      dispatch(signInStart())
+      dispatch(signInStart());
 
       const res = await axios.post(
-        "http://localhost:3000/api/auth/signin",
+        `${API_URL}/api/auth/signin`,
         { email, password },
-        { withCredentials: true }
-      )
+        { withCredentials: true },
+      );
 
       if (res.data.success === false) {
-        toast.error(res.data.message)
-        console.log(res.data)
-        dispatch(signInFailure(res.data.message))
-        return
+        toast.error(res.data.message);
+        console.log(res.data);
+        dispatch(signInFailure(res.data.message));
+        return;
       }
 
-      toast.success(res.data.message)
-      dispatch(signInSuccess(res.data))
-      navigate("/")
+      toast.success(res.data.message);
+      dispatch(signInSuccess(res.data));
+      navigate("/");
     } catch (error) {
-      toast.error(error.message)
-      dispatch(signInFailure(error.message))
+      toast.error(error.message);
+      dispatch(signInFailure(error.message));
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-brand-50 via-white to-purple-50">
@@ -128,7 +129,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

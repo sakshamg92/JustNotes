@@ -1,84 +1,85 @@
-import React, { useState } from "react"
-import { MdClose } from "react-icons/md"
-import TagInput from "../../components/Input/TagInput "
-import axios from "axios"
-import { toast } from "react-toastify"
+const API_URL = import.meta.env.VITE_API_URL;
+import React, { useState } from "react";
+import { MdClose } from "react-icons/md";
+import TagInput from "../../components/Input/TagInput ";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const AddEditNotes = ({ onClose, noteData, type, getAllNotes }) => {
-  const [title, setTitle] = useState(noteData?.title || "")
-  const [content, setContent] = useState(noteData?.content || "")
-  const [tags, setTags] = useState(noteData?.tags || [])
-  const [error, setError] = useState(null)
+  const [title, setTitle] = useState(noteData?.title || "");
+  const [content, setContent] = useState(noteData?.content || "");
+  const [tags, setTags] = useState(noteData?.tags || []);
+  const [error, setError] = useState(null);
 
   //   Edit Note
   const editNote = async () => {
-    const noteId = noteData._id
+    const noteId = noteData._id;
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/note/edit/" + noteId,
+        `${API_URL}/api/note/edit/${noteId}`,
         { title, content, tags },
-        { withCredentials: true }
-      )
+        { withCredentials: true },
+      );
 
       if (res.data.success === false) {
-        setError(res.data.message)
-        toast.error(res.data.message)
-        return
+        setError(res.data.message);
+        toast.error(res.data.message);
+        return;
       }
 
-      toast.success(res.data.message)
-      getAllNotes()
-      onClose()
+      toast.success(res.data.message);
+      getAllNotes();
+      onClose();
     } catch (error) {
-      toast.error(error.message)
-      setError(error.message)
+      toast.error(error.message);
+      setError(error.message);
     }
-  }
+  };
 
   //   Add Note
   const addNewNote = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/note/add",
+        `${API_URL}/api/note/add`,
         { title, content, tags },
-        { withCredentials: true }
-      )
+        { withCredentials: true },
+      );
 
       if (res.data.success === false) {
-        setError(res.data.message)
-        toast.error(res.data.message)
-        return
+        setError(res.data.message);
+        toast.error(res.data.message);
+        return;
       }
 
-      toast.success(res.data.message)
-      getAllNotes()
-      onClose()
+      toast.success(res.data.message);
+      getAllNotes();
+      onClose();
     } catch (error) {
-      toast.error(error.message)
-      setError(error.message)
+      toast.error(error.message);
+      setError(error.message);
     }
-  }
+  };
 
   const handleAddNote = () => {
     if (!title) {
-      setError("Please enter the title")
-      return
+      setError("Please enter the title");
+      return;
     }
 
     if (!content) {
-      setError("Please enter the content")
-      return
+      setError("Please enter the content");
+      return;
     }
 
-    setError("")
+    setError("");
 
     if (type === "edit") {
-      editNote()
+      editNote();
     } else {
-      addNewNote()
+      addNewNote();
     }
-  }
+  };
 
   return (
     <div className="relative">
@@ -140,7 +141,7 @@ const AddEditNotes = ({ onClose, noteData, type, getAllNotes }) => {
         {type === "edit" ? "Update Note" : "Create Note"}
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default AddEditNotes
+export default AddEditNotes;

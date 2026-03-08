@@ -1,57 +1,58 @@
-import React, { useState } from "react"
-import SearchBar from "./SearchBar/SearchBar"
-import ProfileInfo from "./Cards/ProfileInfo"
-import { Link, useNavigate } from "react-router-dom"
-import { useDispatch } from "react-redux"
-import { toast } from "react-toastify"
+const API_URL = import.meta.env.VITE_API_URL;
+import React, { useState } from "react";
+import SearchBar from "./SearchBar/SearchBar";
+import ProfileInfo from "./Cards/ProfileInfo";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import {
   signoutSuccess,
   signoutFailure,
   signoutStart,
-} from "../redux/user/userSlice"
-import axios from "axios"
+} from "../redux/user/userSlice";
+import axios from "axios";
 
 const Navbar = ({ userInfo, onSearchNote, handleClearSearch }) => {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSearch = () => {
     if (searchQuery) {
-      onSearchNote(searchQuery)
+      onSearchNote(searchQuery);
     }
-  }
+  };
 
   const onClearSearch = () => {
-    setSearchQuery("")
-    handleClearSearch()
-  }
+    setSearchQuery("");
+    handleClearSearch();
+  };
 
   const onLogout = async () => {
     try {
-      dispatch(signoutStart())
+      dispatch(signoutStart());
 
-      const res = await axios.get("http://localhost:3000/api/auth/signout", {
+      const res = await axios.get(`${API_URL}/api/auth/signout`, {
         withCredentials: true,
-      })
+      });
 
       if (res.data.success === false) {
-        dispatch(signoutFailure(res.data.message))
-        toast.error(res.data.message)
-        return
+        dispatch(signoutFailure(res.data.message));
+        toast.error(res.data.message);
+        return;
       }
 
-      toast.success(res.data.message)
-      dispatch(signoutSuccess())
-      navigate("/login")
+      toast.success(res.data.message);
+      dispatch(signoutSuccess());
+      navigate("/login");
     } catch (error) {
       // Even if the API call fails (401), still clear local state and redirect
-      dispatch(signoutSuccess())
-      navigate("/login")
-      toast.info("Logged out successfully")
+      dispatch(signoutSuccess());
+      navigate("/login");
+      toast.info("Logged out successfully");
     }
-  }
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-soft">
@@ -78,7 +79,7 @@ const Navbar = ({ userInfo, onSearchNote, handleClearSearch }) => {
         <ProfileInfo userInfo={userInfo} onLogout={onLogout} />
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
